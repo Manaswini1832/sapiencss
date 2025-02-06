@@ -8,11 +8,15 @@ using namespace std;
 
 enum TOKENTYPE
 {
+    SHAPE,
     STRING,
-    KEYWORD,
+    MAKE,
+    WITH,
+    IDENTIFIER,
     ATTRIBUTE,
     END_OF_FILE,
-    NEWLINE
+    NEWLINE,
+    SEMI_COLON
 };
 
 class Token
@@ -37,16 +41,24 @@ public:
     {
         switch (type)
         {
+        case SHAPE:
+            return "SHAPE";
         case STRING:
             return "STRING";
-        case KEYWORD:
-            return "KEYWORD";
+        case MAKE:
+            return "MAKE";
+        case WITH:
+            return "WITH";
+        case IDENTIFIER:
+            return "IDENTIFIER";
         case ATTRIBUTE:
             return "ATTRIBUTE";
         case END_OF_FILE:
             return "END_OF_FILE";
         case NEWLINE:
             return "NEWLINE";
+        case SEMI_COLON:
+            return "SEMI_COLON";
         default:
             break;
         }

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <unordered_set>
 
 #include "Token.h"
 
@@ -15,6 +16,9 @@ class Lexer
     string source;
     char currChar;
     int currPos;
+
+    static const unordered_set<string> validShapes;
+    static bool withKeywordReaced;
 
 public:
     Lexer(string source) : source(source), currPos(-1)
@@ -51,6 +55,18 @@ public:
         }
     }
 
+    bool isShape(string &str)
+    {
+        string cleanedStr;
+
+        for (auto c : str)
+        {
+            if (c != ' ')
+                cleanedStr += c;
+        }
+        return validShapes.find(cleanedStr) != validShapes.end();
+    }
+
     Token *getStringToken()
     {
         int startPos = currPos;
@@ -67,7 +83,10 @@ public:
 
         nextChar();
 
-        return new Token(STRING, source.substr(startPos, currPos - startPos - 1));
+        string tokenStr = source.substr(startPos, currPos - startPos - 1);
+        if (!withKeywordReaced)
+            return new Token(IDENTIFIER, tokenStr);
+        return new Token(STRING, tokenStr);
     }
 
     Token *getKeyWordToken()
@@ -84,7 +103,19 @@ public:
             return nullptr;
         }
 
-        return new Token(KEYWORD, source.substr(startPos, currPos - startPos));
+        string tokenStr = source.substr(startPos, currPos - startPos);
+
+        if (isShape(tokenStr))
+            return new Token(SHAPE, tokenStr);
+        if (tokenStr == "MAKE")
+            return new Token(MAKE, tokenStr);
+        if (tokenStr == "WITH")
+        {
+            withKeywordReaced = true;
+            return new Token(WITH, tokenStr);
+        }
+
+        return nullptr;
     }
 
     Token *getAttributeToken()
@@ -114,11 +145,16 @@ public:
         skipComments();
 
         // skip whitespace, comma, semicolon
-        while (isspace(currChar) || currChar == ',' || currChar == ';')
+        while (isspace(currChar) || currChar == ',')
         {
             nextChar();
         }
-
+        if (currChar == ';')
+        {
+            nextChar();
+            withKeywordReaced = false;
+            return new Token(SEMI_COLON, ";");
+        }
         if (currChar == '"')
         {
             nextChar();
@@ -152,5 +188,9 @@ public:
         return currChar;
     }
 };
+
+// Static definition of valid shapes
+const unordered_set<string> Lexer::validShapes = {"RECTANGLE", "CIRCLE", "LINE"};
+bool Lexer::withKeywordReaced = false;
 
 #endif
