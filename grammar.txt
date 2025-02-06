@@ -1,0 +1,18 @@
+Grammar
+program ::= {statement}
+
+statement ::= "MAKE" shape identifier "WITH" attributes SEMI_COLON nl
+
+shape ::= "RECTANGLE" | "CIRCLE" | "LINE"
+
+identifier ::= string
+
+attributes ::= attribute (, attribute)*
+
+attribute ::= attribute_name value
+
+attribute_name ::= "color" | "width" | "height" | "x" | "y" | "radius" | "length" | "rotate"
+
+value ::= string
+
+nl ::= "\n"

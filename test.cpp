@@ -42,6 +42,8 @@ int main()
 
     while (type != END_OF_FILE)
     {
+        if (type == MAKE)
+            cout << "------------------------" << endl;
         cout << word << " : " << typeString << endl;
 
         token = lexer->getToken();

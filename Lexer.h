@@ -145,9 +145,14 @@ public:
         skipComments();
 
         // skip whitespace, comma, semicolon
-        while (isspace(currChar) || currChar == ',')
+        while ((isspace(currChar) && currChar != '\n') || currChar == ',')
         {
             nextChar();
+        }
+        if (currChar == '\n')
+        {
+            nextChar();
+            return new Token(NEWLINE, "NEWLINE");
         }
         if (currChar == ';')
         {
@@ -162,11 +167,7 @@ public:
         }
         if (currChar == '\0')
         {
-            return new Token(END_OF_FILE, "\0");
-        }
-        if (currChar == '\n')
-        {
-            return new Token(NEWLINE, "\n");
+            return new Token(END_OF_FILE, "END_OF_FILE");
         }
 
         // Handle keywords and attributes
