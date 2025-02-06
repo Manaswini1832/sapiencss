@@ -33,6 +33,7 @@ int main()
 
     // Parser
     Parser *parser = new Parser(lexer);
+    parser->program();
 
     /* LEXER testing
     Token *token = lexer->getToken();

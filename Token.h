@@ -16,6 +16,7 @@ enum TOKENTYPE
     ATTRIBUTE,
     END_OF_FILE,
     NEWLINE,
+    COMMA,
     SEMI_COLON
 };
 
@@ -59,6 +60,8 @@ public:
             return "NEWLINE";
         case SEMI_COLON:
             return "SEMI_COLON";
+        case COMMA:
+            return "COMMA";
         default:
             break;
         }

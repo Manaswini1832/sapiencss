@@ -145,7 +145,7 @@ public:
         skipComments();
 
         // skip whitespace, comma, semicolon
-        while ((isspace(currChar) && currChar != '\n') || currChar == ',')
+        while ((isspace(currChar) && currChar != '\n'))
         {
             nextChar();
         }
@@ -153,6 +153,11 @@ public:
         {
             nextChar();
             return new Token(NEWLINE, "NEWLINE");
+        }
+        if (currChar == ',')
+        {
+            nextChar();
+            return new Token(COMMA, ",");
         }
         if (currChar == ';')
         {
