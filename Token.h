@@ -37,7 +37,7 @@ public:
         return word;
     }
 
-    string getTypeString(TOKENTYPE type)
+    static string getTypeString(TOKENTYPE type)
     {
         switch (type)
         {

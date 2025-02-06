@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Lexer.h"
+#include "Parser.h"
 
 using namespace std;
 
@@ -30,6 +31,10 @@ int main()
     // lexer working on the source code from the file
     Lexer *lexer = new Lexer(srcCode);
 
+    // Parser
+    Parser *parser = new Parser(lexer);
+
+    /* LEXER testing
     Token *token = lexer->getToken();
     if (token == nullptr)
     {
@@ -56,7 +61,7 @@ int main()
         type = token->getTokenType();
         word = token->getTokenWord();
         typeString = token->getTypeString(type);
-    }
+    }*/
 
     return 0;
 }

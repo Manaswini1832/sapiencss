@@ -1,11 +1,9 @@
 Grammar
 program ::= {statement}
 
-statement ::= "MAKE" shape identifier "WITH" attributes SEMI_COLON nl
+statement ::= "MAKE" "SHAPE" "IDENTIFIER" "WITH" attributes SEMI_COLON nl
 
 shape ::= "RECTANGLE" | "CIRCLE" | "LINE"
-
-identifier ::= string
 
 attributes ::= attribute (, attribute)*
 
@@ -16,3 +14,12 @@ attribute_name ::= "color" | "width" | "height" | "x" | "y" | "radius" | "length
 value ::= string
 
 nl ::= "\n"
+
+
+Functions
+void statement()
+void shape()
+void attributes()
+void attribute_name()
+void value()
+void nl()
