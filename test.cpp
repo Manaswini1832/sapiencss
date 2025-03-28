@@ -5,6 +5,7 @@
 
 #include "Lexer.h"
 #include "Parser.h"
+#include "Emitter.h"
 
 using namespace std;
 
@@ -28,12 +29,15 @@ int main()
         srcCode += '\n';
     }
 
-    // lexer working on the source code from the file
     Lexer *lexer = new Lexer(srcCode);
+    Emitter *emitter = new Emitter("output.js");
 
-    // Parser
-    Parser *parser = new Parser(lexer);
+    Parser *parser = new Parser(lexer, emitter);
     parser->program();
+
+    emitter->writeFile();
+
+    // cout << "Compiling completed" << endl;
 
     // LEXER testing
     /*Token *token = lexer->getToken();
