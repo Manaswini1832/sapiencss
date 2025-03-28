@@ -35,8 +35,8 @@ int main()
     Parser *parser = new Parser(lexer);
     parser->program();
 
-    /* LEXER testing
-    Token *token = lexer->getToken();
+    // LEXER testing
+    /*Token *token = lexer->getToken();
     if (token == nullptr)
     {
         cerr << "Error: Failed to read token!" << endl;

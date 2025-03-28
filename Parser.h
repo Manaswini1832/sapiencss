@@ -48,6 +48,10 @@ public:
     {
         if (!checkToken(tokType))
             cerr << "Expected " << Token::getTypeString(tokType) << ", got " << Token::getTypeString(currToken->getTokenType()) << endl;
+        else
+        {
+            cout << Token::getTypeString(tokType) << endl;
+        }
         nextToken();
     }
 
@@ -61,13 +65,16 @@ public:
     // Rule: statement ::= "MAKE" "SHAPE" "IDENTIFIER" "WITH" attributes SEMI_COLON nl
     void statement()
     {
-        make();
-        match(SHAPE);
-        match(IDENTIFIER);
-        match(WITH);
-        attributes();
-        match(SEMI_COLON);
-        nl();
+        while (peekToken->getTokenType() != END_OF_FILE)
+        {
+            make();
+            match(SHAPE);
+            match(IDENTIFIER);
+            match(WITH);
+            attributes();
+            match(SEMI_COLON);
+            nl();
+        }
     }
 
     void make()
@@ -85,6 +92,7 @@ public:
 
     void shape()
     {
+        cout << "SHAPE" << endl;
         if (checkToken(SHAPE))
         {
             nextToken();
@@ -122,23 +130,17 @@ public:
         };
 
         // Check if the current token is a string and matches one of the valid attribute names
-        if (checkToken(STRING))
-        {
-            string attributeName = currToken->getTokenWord(); // Assuming Token has a method to get the token's string value
+        string attributeName = currToken->getTokenWord(); // Assuming Token has a method to get the token's string value
 
-            // Check if the attributeName is in the list of valid attributes
-            if (find(validAttributes.begin(), validAttributes.end(), attributeName) != validAttributes.end())
-            {
-                nextToken(); // Consume the valid attribute name
-            }
-            else
-            {
-                cerr << "Expected a valid attribute name, but got \"" << attributeName << "\"" << endl;
-            }
+        // Check if the attributeName is in the list of valid attributes
+        if (find(validAttributes.begin(), validAttributes.end(), attributeName) != validAttributes.end())
+        {
+            cout << "ATTRIBUTE" << endl;
+            nextToken(); // Consume the valid attribute name
         }
         else
         {
-            cerr << "Expected a string attribute name, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            cerr << "Expected a valid attribute name, but got \"" << attributeName << "\"" << endl;
         }
     }
 
@@ -147,6 +149,7 @@ public:
     {
         if (checkToken(STRING))
         {
+            cout << "VALUE" << endl;
             nextToken(); // Consume the string value
         }
         else
