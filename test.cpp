@@ -2,11 +2,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
-#include "Lexer.h"
-#include "Parser.h"
-#include "Emitter.h"
-
+#include "createSapienCSSCode.h"
 using namespace std;
 
 int main()
@@ -29,44 +25,11 @@ int main()
         srcCode += '\n';
     }
 
-    Lexer *lexer = new Lexer(srcCode);
-    Emitter *emitter = new Emitter("output.js");
+    // creating sapien css code
+    string outputCode = createSapienCSSCode(srcCode);
 
-    Parser *parser = new Parser(lexer, emitter);
-    parser->program();
-
-    emitter->writeFile();
-
-    // cout << "Compiling completed" << endl;
-
-    // LEXER testing
-    /*Token *token = lexer->getToken();
-    if (token == nullptr)
-    {
-        cerr << "Error: Failed to read token!" << endl;
-        return 1;
-    }
-    TOKENTYPE type = token->getTokenType();
-    string word = token->getTokenWord();
-    string typeString = token->getTypeString(type);
-
-    while (type != END_OF_FILE)
-    {
-        if (type == MAKE)
-            cout << "------------------------" << endl;
-        cout << word << " : " << typeString << endl;
-
-        token = lexer->getToken();
-        if (token == nullptr)
-        {
-            cout << lexer->getCurrChar() << endl;
-            cerr << "Error: Failed to read token!" << endl;
-            return 1;
-        }
-        type = token->getTokenType();
-        word = token->getTokenWord();
-        typeString = token->getTypeString(type);
-    }*/
+    cout << "From test main file" << endl;
+    cout << outputCode << endl;
 
     return 0;
 }

@@ -37,15 +37,10 @@ public:
         this->header += "\n";
     }
 
-    void writeFile()
+    string writeFile()
     {
-        // with open(self.fullPath, 'w') as outputFile:
-        //     outputFile.write(self.header + self.code)
-        /*cout << "------------------------------------------" << endl;
-        cout << "FINAL CODE" << endl;
-        cout << "------------------------------------------" << endl;*/
-        cout << header << endl;
-        cout << code << endl;
+        string output = header + code;
+        return output;
     }
 };
 
