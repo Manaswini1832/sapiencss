@@ -1,34 +1,21 @@
 #include <iostream>
 #include <string>
-#include <fstream>
-#include <vector>
-#include "createSapienCSSCode.h"
+#include "headers/createSapienCSSCode.h"
 using namespace std;
 
 int main()
 {
-    string srcCode, line;
-
-    // reading file input
-    string filePath = "sapcss.txt";
-    ifstream file(filePath);
-
-    if (!file.is_open())
-    {
-        cerr << "Couldn't open source code" << endl;
-        return 1;
-    }
-
-    while (getline(file, line))
-    {
-        srcCode += line;
-        srcCode += '\n';
-    }
+    // sapienCSS input
+    string srcCode = "\
+    MAKE RECTANGLE \"r1\" WITH color \"red\", x \"10\", y \"10\", width \"5\", height \"10\";\n\
+    MAKE CIRCLE \"c1\" WITH color \"yellow\", x \"20\", y \"30\", radius \"5\";\n\
+    MAKE LINE \"l1\" WITH color \"teal\", x \"5\", y \"15\", length \"15\";\n\
+    ";
 
     // creating sapien css code
     string outputCode = createSapienCSSCode(srcCode);
 
-    cout << "From test main file" << endl;
+    // canvas js output
     cout << outputCode << endl;
 
     return 0;
