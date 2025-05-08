@@ -4,6 +4,7 @@
 #include <cctype>
 #include <unordered_set>
 #include <algorithm>
+#include <cstring>
 #include <unordered_map>
 
 using namespace std;
@@ -91,7 +92,7 @@ public:
     void nextChar()
     {
         currPos++;
-        if (currPos >= source.length())
+        if (currPos >= (int)(source.length()))
         {
             currChar = '\0'; // EOF
         }
@@ -103,7 +104,7 @@ public:
 
     char peek()
     {
-        if (currPos + 1 >= source.length())
+        if (currPos + 1 >= (int)(source.length()))
             return '\0';
         return source[currPos + 1];
     }
@@ -350,6 +351,7 @@ public:
         emitter->headerLine("  const canvas = document.getElementById(\"canvas\");");
         emitter->headerLine("  if (canvas.getContext) {");
         emitter->headerLine("    const ctx = canvas.getContext(\"2d\");");
+        emitter->headerLine("ctx.clearRect(0, 0, canvas.width, canvas.height);");
         statement();
         // cout << "After statement" << endl;
         emitter->emitLine("  }");
@@ -526,15 +528,57 @@ public:
     }
 };
 
-string sapienCSSCompiler(string srcCode)
+// extern "C" const char *sapienCSSCompiler(const char *srcCode)
+// {
+//     std::string input(srcCode);
+//     Lexer *lexer = new Lexer(srcCode);
+//     Emitter *emitter = new Emitter("output.js");
+
+//     Parser *parser = new Parser(lexer, emitter);
+//     parser->program();
+
+//     return emitter->writeFile().c_str();
+// }
+
+extern "C"
 {
-    Lexer *lexer = new Lexer(srcCode);
-    Emitter *emitter = new Emitter("output.js");
 
-    Parser *parser = new Parser(lexer, emitter);
-    parser->program();
+    const char *sapienCSSCompiler(const char *srcCode)
+    {
+        std::string input(srcCode);
+        Lexer *lexer = new Lexer(input);
+        Emitter *emitter = new Emitter("output.js");
 
-    string output = emitter->writeFile();
+        Parser *parser = new Parser(lexer, emitter);
+        parser->program();
 
-    return output;
+        std::string output = emitter->writeFile();
+        if (output.find("EXPECTED") != std::string::npos)
+        {
+            output = "Error";
+        }
+
+        char *result = (char *)malloc(output.size() + 1);
+
+        if (result)
+        {
+            std::memcpy(result, output.c_str(), output.size() + 1);
+        }
+
+        delete parser;
+        delete emitter;
+        delete lexer;
+
+        return result;
+    }
+
+    void freeResult(const char *ptr)
+    {
+        free((void *)ptr);
+    }
+}
+
+extern "C" int subtract(int num1, int num2)
+{
+    return num1 - num2;
 }

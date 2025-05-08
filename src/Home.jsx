@@ -1,0 +1,57 @@
+import { useContext, useState, useEffect } from "react";
+import { WasmContext } from "./contexts/WasmContext";
+
+export const Home = () => {
+    const { wasmModule } = useContext(WasmContext);
+    const [result, setResult] = useState("");
+    const [input, setInput] = useState(""); // input state
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (wasmModule) {
+            setLoading(false);
+        }
+    }, [wasmModule]);
+
+    useEffect(() => {
+        if(result){
+            let drawSapCSSCanvas = new Function(result);
+            console.log(result);
+            drawSapCSSCanvas();
+        }
+    }, [result]);
+
+    const handleClick = () => {   
+        if (input && wasmModule) {
+            const compileInput = input.endsWith('\n') ? input : input + '\n';
+            const sapienCSSCompiler = wasmModule.cwrap("sapienCSSCompiler", "number", ["string"]);
+            const outputPtr = sapienCSSCompiler(compileInput);
+
+            const output = wasmModule.UTF8ToString(outputPtr);
+
+            setResult(output);
+
+            const freeResult = wasmModule.cwrap("freeResult", null, ["number"]);
+            freeResult(outputPtr);
+        }
+    };
+
+    return loading ? (
+        <div>Loading...</div>
+    ) : (
+        <div>
+            <textarea
+                rows="6"
+                cols="60"
+                placeholder="Enter your CSS-like code"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+            />
+            <br />
+            <button onClick={handleClick}>Compile</button>
+            <h3>Compiler Output:</h3>
+            <canvas id="canvas" width="1500" height="1500"/>
+            <pre>{result}</pre>
+        </div>
+    );
+};
