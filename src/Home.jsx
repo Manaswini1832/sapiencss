@@ -15,15 +15,16 @@ export const Home = () => {
 
     useEffect(() => {
         if(result){
-            let drawSapCSSCanvas = new Function(result);
+            //let drawSapCSSCanvas = new Function(result);
             console.log(result);
-            drawSapCSSCanvas();
+            //drawSapCSSCanvas();
         }
     }, [result]);
 
     const handleClick = () => {   
         if (input && wasmModule) {
             const compileInput = input.endsWith('\n') ? input : input + '\n';
+
             const sapienCSSCompiler = wasmModule.cwrap("sapienCSSCompiler", "number", ["string"]);
             const outputPtr = sapienCSSCompiler(compileInput);
 
@@ -50,6 +51,7 @@ export const Home = () => {
             <br />
             <button onClick={handleClick}>Compile</button>
             <h3>Compiler Output:</h3>
+            <pre>{result}</pre>
             <canvas id="canvas" width="1500" height="1500"/>
             <pre>{result}</pre>
         </div>

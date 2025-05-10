@@ -21,7 +21,8 @@ enum TOKENTYPE
     END_OF_FILE,
     NEWLINE,
     COMMA,
-    SEMI_COLON
+    SEMI_COLON,
+    INVALID
 };
 
 class Token
@@ -69,7 +70,7 @@ public:
         default:
             break;
         }
-        return "";
+        return "INVALID";
     }
 };
 
@@ -140,7 +141,7 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
@@ -162,7 +163,7 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
@@ -178,7 +179,7 @@ public:
             return new Token(WITH, tokenStr);
         }
 
-        return nullptr;
+        return new Token(INVALID, tokenStr);
     }
 
     Token *getAttributeToken()
@@ -188,7 +189,7 @@ public:
         {
             if (currChar == '\n')
             {
-                cerr << "Missing space after attribute" << endl;
+                // cerr << "Missing space after attribute" << endl;
                 return nullptr;
             }
             nextChar();
@@ -196,14 +197,14 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
         return new Token(ATTRIBUTE, source.substr(startPos, currPos - startPos));
     }
 
-    Token *getToken()
+    Token *getToken(bool &errorBool, string &errorMessage)
     {
         skipComments();
 
@@ -247,7 +248,6 @@ public:
         {
             return getAttributeToken();
         }
-
         return nullptr;
     }
 
@@ -303,13 +303,24 @@ class Parser
     Emitter *emitter;
     Token *currToken;
     Token *peekToken;
+    string errorMessage = "";
+    bool errorBool = false;
     unordered_map<string, string> values; // stores attribute values read while parsing a line in string form
 
 public:
+    ~Parser()
+    {
+        values.clear();
+    }
+
     void nextToken()
     {
         currToken = peekToken;
-        peekToken = lexer->getToken();
+        peekToken = lexer->getToken(errorBool, errorMessage);
+        if (!peekToken)
+        {
+            peekToken = new Token(INVALID, "INVALID_TOKEN");
+        }
     }
 
     // Constructor
@@ -335,10 +346,11 @@ public:
     void match(TOKENTYPE tokType)
     {
         if (!checkToken(tokType))
-            cerr << "Expected " << Token::getTypeString(tokType) << ", got " << Token::getTypeString(currToken->getTokenType()) << endl;
-        else
         {
-            // cout << Token::getTypeString(tokType) << endl;
+            // cerr << "Expected " << Token::getTypeString(tokType) << ", got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Missing " + Token::getTypeString(tokType) + ".";
+            return;
         }
         nextToken();
     }
@@ -351,9 +363,10 @@ public:
         emitter->headerLine("  const canvas = document.getElementById(\"canvas\");");
         emitter->headerLine("  if (canvas.getContext) {");
         emitter->headerLine("    const ctx = canvas.getContext(\"2d\");");
-        emitter->headerLine("ctx.clearRect(0, 0, canvas.width, canvas.height);");
+        emitter->headerLine("    ctx.clearRect(0, 0, canvas.width, canvas.height);");
         statement();
-        // cout << "After statement" << endl;
+        if (errorBool)
+            emitter->emitLine("\n    // ERROR : " + errorMessage);
         emitter->emitLine("  }");
         emitter->emitLine("}");
         emitter->emitLine("draw();");
@@ -365,11 +378,23 @@ public:
         while (peekToken->getTokenType() != END_OF_FILE)
         {
             make();
+            if (errorBool)
+                return;
             shape();
+            if (errorBool)
+                return;
             identifier();
+            if (errorBool)
+                return;
             match(WITH);
+            if (errorBool)
+                return;
             attributes();
+            if (errorBool)
+                return;
             match(SEMI_COLON);
+            if (errorBool)
+                return;
             nl();
         }
     }
@@ -383,7 +408,10 @@ public:
         }
         else
         {
-            cerr << "Expected make, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            // cerr << "Expected make, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Expected MAKE got " + currToken->getTokenWord() + " instead.";
+            return;
         }
     }
 
@@ -391,13 +419,15 @@ public:
     {
         if (checkToken(SHAPE))
         {
-            // cout << "SHAPE" << endl;
             values["shape"] = currToken->getTokenWord();
             nextToken();
         }
         else
         {
-            cerr << "Expected shape, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            // cerr << "Expected shape, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Invalid shape : " + currToken->getTokenWord() + ". SapienCSS currently supports : RECTANGLE, CIRCLE, LINE.";
+            return;
         }
     }
 
@@ -411,7 +441,10 @@ public:
         }
         else
         {
-            cerr << "Expected identifier, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            // cerr << "Expected identifier, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Expected identifier but got " + currToken->getTokenWord() + " instead.";
+            return;
         }
     }
 
@@ -419,10 +452,31 @@ public:
     void attributes()
     {
         attribute();
+        if (errorBool)
+            return;
+        if (!values.empty() && !checkToken(COMMA))
+        {
+            errorBool = true;
+            errorMessage = "MISSING COMMA";
+            return;
+        }
+
         while (checkToken(COMMA))
         {
             nextToken(); // Consume COMMA
             attribute();
+            if (errorBool)
+                return;
+        }
+
+        if (!values.empty() && !checkToken(COMMA) && !checkToken(SEMI_COLON))
+        {
+            errorBool = true;
+            if (currToken->getTokenWord() == "NEWLINE")
+                errorMessage = "MISSING SEMICOLON";
+            else
+                errorMessage = "MISSING COMMA";
+            return;
         }
     }
 
@@ -431,7 +485,11 @@ public:
     {
         string attribute_entry_name;
         attribute_name(attribute_entry_name);
+        if (errorBool)
+            return;
         value(attribute_entry_name);
+        if (errorBool)
+            return;
     }
 
     // Rule: attribute_name ::= "color" | "width" | "height" | "x" | "y" | "radius" | "length" | "rotate"
@@ -454,7 +512,10 @@ public:
         }
         else
         {
-            cerr << "Expected a valid attribute name, but got \"" << attributeName << "\"" << endl;
+            // cerr << "Expected a valid attribute name, but got \"" << attributeName << "\"" << endl;
+            errorBool = true;
+            errorMessage = "Expected a valid attribute name, but got \"" + attributeName + "\". Please refer to the docs for a list of supported attributes.";
+            return;
         }
     }
 
@@ -469,7 +530,10 @@ public:
         }
         else
         {
-            cerr << "Expected a value (STRING), but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            // cerr << "Expected a value (STRING), but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Expected a valid value, but got \"" + currToken->getTokenWord() + "\". Please refer to the docs for the correct way to give values to attributes.";
+            return;
         }
     }
 
@@ -485,7 +549,10 @@ public:
         }
         else
         {
-            cerr << "Expected newline, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            // cerr << "Expected newline, but got " << Token::getTypeString(currToken->getTokenType()) << endl;
+            errorBool = true;
+            errorMessage = "Expected newline, but got " + Token::getTypeString(currToken->getTokenType());
+            return;
         }
 
         while (checkToken(NEWLINE))
@@ -494,36 +561,36 @@ public:
 
     void makeShape()
     {
-        emitter->emitLine("// " + values["identifier"]); // id of the shape will be put as a comment
+        emitter->emitLine("\n    // " + values["identifier"]); // id of the shape will be put as a comment
         if (values["shape"] == "RECTANGLE")
         {
-            emitter->emitLine("let x = " + values["x"] + ", y = " + values["y"] + ", width = " + values["width"] + ", height = " + values["height"] + ";");
-            emitter->emitLine("ctx.fillStyle = \"" + values["color"] + "\";");
-            emitter->emitLine("ctx.fillRect(x, y, width, height);");
+            emitter->emitLine("    let x = " + values["x"] + ", y = " + values["y"] + ", width = " + values["width"] + ", height = " + values["height"] + ";");
+            emitter->emitLine("    ctx.fillStyle = \"" + values["color"] + "\";");
+            emitter->emitLine("    ctx.fillRect(x, y, width, height);");
         }
         else if (values["shape"] == "CIRCLE")
         {
-            emitter->emitLine("x = " + values["x"] + "; y = " + values["y"] + ";");
-            emitter->emitLine("let radius = " + values["radius"] + ";");
-            emitter->emitLine("ctx.beginPath();");
-            emitter->emitLine("ctx.arc(x, y, radius, 0, 2 * Math.PI);");
-            emitter->emitLine("ctx.fillStyle = \"" + values["color"] + "\";");
-            emitter->emitLine("ctx.fill();");
+            emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
+            emitter->emitLine("    let radius = " + values["radius"] + ";");
+            emitter->emitLine("    ctx.beginPath();");
+            emitter->emitLine("    ctx.arc(x, y, radius, 0, 2 * Math.PI);");
+            emitter->emitLine("    ctx.fillStyle = \"" + values["color"] + "\";");
+            emitter->emitLine("    ctx.fill();");
         }
         else if (values["shape"] == "LINE")
         {
 
-            emitter->emitLine("x = " + values["x"] + "; y = " + values["y"] + ";");
-            emitter->emitLine("let length = " + values["length"] + ";");
-            emitter->emitLine("ctx.beginPath();");
-            emitter->emitLine("ctx.moveTo(x, y);");
-            emitter->emitLine("ctx.lineTo(x + length, y);");
-            emitter->emitLine("ctx.strokeStyle = \"" + values["color"] + "\";");
-            emitter->emitLine("ctx.stroke();");
+            emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
+            emitter->emitLine("    let length = " + values["length"] + ";");
+            emitter->emitLine("    ctx.beginPath();");
+            emitter->emitLine("    ctx.moveTo(x, y);");
+            emitter->emitLine("    ctx.lineTo(x + length, y);");
+            emitter->emitLine("    ctx.strokeStyle = \"" + values["color"] + "\";");
+            emitter->emitLine("    ctx.stroke();");
         }
         else
         {
-            emitter->emitLine("//Invalid syntax. Can't draw this shape");
+            emitter->emitLine("    // ERROR : Invalid syntax. Can't draw this shape");
         }
     }
 };

@@ -17,7 +17,8 @@ enum TOKENTYPE
     END_OF_FILE,
     NEWLINE,
     COMMA,
-    SEMI_COLON
+    SEMI_COLON,
+    INVALID
 };
 
 class Token
@@ -65,7 +66,7 @@ public:
         default:
             break;
         }
-        return "";
+        return "INVALID";
     }
 };
 

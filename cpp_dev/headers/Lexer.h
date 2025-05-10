@@ -29,7 +29,7 @@ public:
     void nextChar()
     {
         currPos++;
-        if (currPos >= source.length())
+        if (currPos >= (int)(source.length()))
         {
             currChar = '\0'; // EOF
         }
@@ -41,7 +41,7 @@ public:
 
     char peek()
     {
-        if (currPos + 1 >= source.length())
+        if (currPos + 1 >= (int)(source.length()))
             return '\0';
         return source[currPos + 1];
     }
@@ -77,7 +77,7 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
@@ -99,7 +99,7 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
@@ -115,7 +115,7 @@ public:
             return new Token(WITH, tokenStr);
         }
 
-        return nullptr;
+        return new Token(INVALID, tokenStr);
     }
 
     Token *getAttributeToken()
@@ -125,7 +125,7 @@ public:
         {
             if (currChar == '\n')
             {
-                cerr << "Missing space after attribute" << endl;
+                // cerr << "Missing space after attribute" << endl;
                 return nullptr;
             }
             nextChar();
@@ -133,14 +133,14 @@ public:
 
         if (currChar == '\0')
         {
-            cerr << "Error: Unterminated string literal!" << endl;
+            // cerr << "Error: Unterminated string literal!" << endl;
             return nullptr;
         }
 
         return new Token(ATTRIBUTE, source.substr(startPos, currPos - startPos));
     }
 
-    Token *getToken()
+    Token *getToken(bool &errorBool, string &errorMessage)
     {
         skipComments();
 
@@ -184,7 +184,6 @@ public:
         {
             return getAttributeToken();
         }
-
         return nullptr;
     }
 

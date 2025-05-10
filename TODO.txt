@@ -1,0 +1,2 @@
+[ ] Comments not being handled correctly by emitter
+[ ] when mistake in attributes and stuff after them till next immediate semicolon, if there's an immediate correction, then pressing compile button doesn't give right output
