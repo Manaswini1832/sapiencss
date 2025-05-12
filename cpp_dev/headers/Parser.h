@@ -26,6 +26,10 @@ class Parser
 public:
     void nextToken()
     {
+        if (currToken)
+        {
+            cout << currToken->getTokenWord() << endl;
+        }
         currToken = peekToken;
         peekToken = lexer->getToken(errorBool, errorMessage);
         if (!peekToken)

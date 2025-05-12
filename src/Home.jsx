@@ -15,9 +15,12 @@ export const Home = () => {
 
     useEffect(() => {
         if(result){
-            //let drawSapCSSCanvas = new Function(result);
-            console.log(result);
-            //drawSapCSSCanvas();
+            try {
+                let drawSapCSSCanvas = new Function(result);
+                drawSapCSSCanvas();   
+            } catch (error) {
+                alert(error);
+            }
         }
     }, [result]);
 

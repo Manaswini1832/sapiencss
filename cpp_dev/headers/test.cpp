@@ -11,6 +11,8 @@ int main()
     MAKE RECTANGLE \"r2\" WITH color \"red\", x \"10\", y \"10\", width \"5\", height \"10\";\n\
     ";
 
+    cout << "Input : " << srcCode << endl;
+
     // creating sapien css code
     string outputCode = createSapienCSSCode(srcCode);
 

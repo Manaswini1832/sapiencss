@@ -18,7 +18,7 @@ class Lexer
     int currPos;
 
     static const unordered_set<string> validShapes;
-    static bool withKeywordReaced;
+    bool withKeywordReaced;
 
 public:
     Lexer(string source) : source(source), currPos(-1)
@@ -52,6 +52,18 @@ public:
         {
             while (currChar != '\n')
                 nextChar();
+        }
+    }
+
+    // debug
+    void printAllTokens()
+    {
+        cout << "PRINTING ALL TOKENS" << endl;
+        int p = currPos;
+        while (p < source.length())
+        {
+            cout << source[p] << endl;
+            p++;
         }
     }
 
@@ -196,6 +208,5 @@ public:
 
 // Static definition of valid shapes
 const unordered_set<string> Lexer::validShapes = {"RECTANGLE", "CIRCLE", "LINE"};
-bool Lexer::withKeywordReaced = false;
 
 #endif

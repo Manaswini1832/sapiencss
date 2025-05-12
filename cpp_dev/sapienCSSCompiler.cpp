@@ -82,11 +82,12 @@ class Lexer
     int currPos;
 
     static const unordered_set<string> validShapes;
-    static bool withKeywordReaced;
+    bool withKeywordReaced;
 
 public:
     Lexer(string source) : source(source), currPos(-1)
     {
+        withKeywordReaced = false;
         nextChar();
     }
 
@@ -108,6 +109,18 @@ public:
         if (currPos + 1 >= (int)(source.length()))
             return '\0';
         return source[currPos + 1];
+    }
+
+    // debug
+    void printAllTokens()
+    {
+        cout << "PRINTING ALL TOKENS" << endl;
+        int p = currPos;
+        while (p < source.length())
+        {
+            cout << source[p] << endl;
+            p++;
+        }
     }
 
     void skipComments()
@@ -260,7 +273,6 @@ public:
 
 // Static definition of valid shapes
 const unordered_set<string> Lexer::validShapes = {"RECTANGLE", "CIRCLE", "LINE"};
-bool Lexer::withKeywordReaced = false;
 
 // Emitter Class
 class Emitter
@@ -311,6 +323,8 @@ public:
     ~Parser()
     {
         values.clear();
+        errorBool = false;
+        errorMessage = "";
     }
 
     void nextToken()
@@ -358,7 +372,6 @@ public:
     // Rule: program ::= {statement}
     void program()
     {
-        // cout << "PROGRAM" << endl;
         emitter->headerLine("function draw() {");
         emitter->headerLine("  const canvas = document.getElementById(\"canvas\");");
         emitter->headerLine("  if (canvas.getContext) {");
@@ -401,7 +414,6 @@ public:
 
     void make()
     {
-        // cout << "STATEMENT-MAKE" << endl;
         if (checkToken(MAKE))
         {
             nextToken();
@@ -435,7 +447,6 @@ public:
     {
         if (checkToken(IDENTIFIER))
         {
-            // cout << "IDENTIFIER" << endl;
             values["identifier"] = currToken->getTokenWord();
             nextToken();
         }
@@ -506,7 +517,6 @@ public:
         // Check if the attributeName is in the list of valid attributes
         if (find(validAttributes.begin(), validAttributes.end(), attributeName) != validAttributes.end())
         {
-            // cout << "ATTRIBUTE" << endl;
             attribute_entry_name = currToken->getTokenWord();
             nextToken(); // Consume the valid attribute name
         }
@@ -524,7 +534,6 @@ public:
     {
         if (checkToken(STRING))
         {
-            // cout << "VALUE = " << endl;
             values[attribute_entry_name] = currToken->getTokenWord();
             nextToken(); // Consume the string value
         }
@@ -540,7 +549,6 @@ public:
     // Rule: nl ::= "\n"
     void nl()
     {
-        // cout << "NEWLINE" << endl;
         if (checkToken(NEWLINE))
         {
             makeShape();
