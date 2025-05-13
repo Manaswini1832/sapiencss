@@ -15,11 +15,17 @@ export const Home = () => {
 
     useEffect(() => {
         if(result){
-            try {
-                let drawSapCSSCanvas = new Function(result);
-                drawSapCSSCanvas();   
-            } catch (error) {
-                alert(error);
+            if(result.search("function draw") === -1){
+                let clearCanvas = new Function('function draw(){const canvas = document.getElementById("canvas");if (canvas.getContext){const ctx = canvas.getContext("2d");ctx.clearRect(0, 0, canvas.width, canvas.height);}}draw();');
+                clearCanvas();
+                alert(result);
+            }else{
+                try {
+                    let drawSapCSSCanvas = new Function(result);
+                    drawSapCSSCanvas();   
+                } catch (error) {
+                    alert(error);
+                }
             }
         }
     }, [result]);
@@ -56,7 +62,6 @@ export const Home = () => {
             <h3>Compiler Output:</h3>
             <pre>{result}</pre>
             <canvas id="canvas" width="1500" height="1500"/>
-            <pre>{result}</pre>
         </div>
     );
 };

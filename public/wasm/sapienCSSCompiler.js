@@ -1743,7 +1743,6 @@ createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _sapienCSSCompiler = Module['_sapienCSSCompiler'] = createExportWrapper('sapienCSSCompiler', 1);
 var _freeResult = Module['_freeResult'] = createExportWrapper('freeResult', 1);
-var _subtract = Module['_subtract'] = createExportWrapper('subtract', 2);
 var _fflush = createExportWrapper('fflush', 1);
 var _strerror = createExportWrapper('strerror', 1);
 var _emscripten_stack_get_end = () => (_emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'])();

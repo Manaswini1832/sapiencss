@@ -370,7 +370,7 @@ public:
     }
 
     // Rule: program ::= {statement}
-    void program()
+    string program()
     {
         emitter->headerLine("function draw() {");
         emitter->headerLine("  const canvas = document.getElementById(\"canvas\");");
@@ -379,10 +379,14 @@ public:
         emitter->headerLine("    ctx.clearRect(0, 0, canvas.width, canvas.height);");
         statement();
         if (errorBool)
+        {
             emitter->emitLine("\n    // ERROR : " + errorMessage);
+            return errorMessage;
+        }
         emitter->emitLine("  }");
         emitter->emitLine("}");
         emitter->emitLine("draw();");
+        return errorMessage;
     }
 
     // Rule: statement ::= "MAKE" "SHAPE" "IDENTIFIER" "WITH" attributes SEMI_COLON nl
@@ -587,7 +591,6 @@ public:
         }
         else if (values["shape"] == "LINE")
         {
-
             emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
             emitter->emitLine("    let length = " + values["length"] + ";");
             emitter->emitLine("    ctx.beginPath();");
@@ -603,18 +606,6 @@ public:
     }
 };
 
-// extern "C" const char *sapienCSSCompiler(const char *srcCode)
-// {
-//     std::string input(srcCode);
-//     Lexer *lexer = new Lexer(srcCode);
-//     Emitter *emitter = new Emitter("output.js");
-
-//     Parser *parser = new Parser(lexer, emitter);
-//     parser->program();
-
-//     return emitter->writeFile().c_str();
-// }
-
 extern "C"
 {
 
@@ -625,7 +616,18 @@ extern "C"
         Emitter *emitter = new Emitter("output.js");
 
         Parser *parser = new Parser(lexer, emitter);
-        parser->program();
+        string ret = parser->program();
+        if (!ret.empty())
+        {
+            char *result = (char *)malloc(ret.size() + 1);
+            std::memcpy(result, ret.c_str(), ret.size() + 1);
+
+            delete parser;
+            delete emitter;
+            delete lexer;
+
+            return result;
+        }
 
         std::string output = emitter->writeFile();
         if (output.find("EXPECTED") != std::string::npos)
@@ -651,9 +653,4 @@ extern "C"
     {
         free((void *)ptr);
     }
-}
-
-extern "C" int subtract(int num1, int num2)
-{
-    return num1 - num2;
 }

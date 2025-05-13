@@ -24,12 +24,15 @@ class Parser
     unordered_map<string, string> values; // stores attribute values read while parsing a line in string form
 
 public:
+    ~Parser()
+    {
+        values.clear();
+        errorBool = false;
+        errorMessage = "";
+    }
+
     void nextToken()
     {
-        if (currToken)
-        {
-            cout << currToken->getTokenWord() << endl;
-        }
         currToken = peekToken;
         peekToken = lexer->getToken(errorBool, errorMessage);
         if (!peekToken)
@@ -71,9 +74,8 @@ public:
     }
 
     // Rule: program ::= {statement}
-    void program()
+    string program()
     {
-        // cout << "PROGRAM" << endl;
         emitter->headerLine("function draw() {");
         emitter->headerLine("  const canvas = document.getElementById(\"canvas\");");
         emitter->headerLine("  if (canvas.getContext) {");
@@ -81,10 +83,14 @@ public:
         emitter->headerLine("    ctx.clearRect(0, 0, canvas.width, canvas.height);");
         statement();
         if (errorBool)
+        {
             emitter->emitLine("\n    // ERROR : " + errorMessage);
+            return errorMessage;
+        }
         emitter->emitLine("  }");
         emitter->emitLine("}");
         emitter->emitLine("draw();");
+        return errorMessage;
     }
 
     // Rule: statement ::= "MAKE" "SHAPE" "IDENTIFIER" "WITH" attributes SEMI_COLON nl
@@ -116,7 +122,6 @@ public:
 
     void make()
     {
-        // cout << "STATEMENT-MAKE" << endl;
         if (checkToken(MAKE))
         {
             nextToken();
@@ -150,7 +155,6 @@ public:
     {
         if (checkToken(IDENTIFIER))
         {
-            // cout << "IDENTIFIER" << endl;
             values["identifier"] = currToken->getTokenWord();
             nextToken();
         }
@@ -221,7 +225,6 @@ public:
         // Check if the attributeName is in the list of valid attributes
         if (find(validAttributes.begin(), validAttributes.end(), attributeName) != validAttributes.end())
         {
-            // cout << "ATTRIBUTE" << endl;
             attribute_entry_name = currToken->getTokenWord();
             nextToken(); // Consume the valid attribute name
         }
@@ -239,7 +242,6 @@ public:
     {
         if (checkToken(STRING))
         {
-            // cout << "VALUE = " << endl;
             values[attribute_entry_name] = currToken->getTokenWord();
             nextToken(); // Consume the string value
         }
@@ -255,7 +257,6 @@ public:
     // Rule: nl ::= "\n"
     void nl()
     {
-        // cout << "NEWLINE" << endl;
         if (checkToken(NEWLINE))
         {
             makeShape();
@@ -294,7 +295,6 @@ public:
         }
         else if (values["shape"] == "LINE")
         {
-
             emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
             emitter->emitLine("    let length = " + values["length"] + ";");
             emitter->emitLine("    ctx.beginPath();");

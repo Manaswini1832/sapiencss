@@ -23,6 +23,7 @@ class Lexer
 public:
     Lexer(string source) : source(source), currPos(-1)
     {
+        withKeywordReaced = false;
         nextChar();
     }
 
@@ -46,15 +47,6 @@ public:
         return source[currPos + 1];
     }
 
-    void skipComments()
-    {
-        if (currChar == '#')
-        {
-            while (currChar != '\n')
-                nextChar();
-        }
-    }
-
     // debug
     void printAllTokens()
     {
@@ -64,6 +56,15 @@ public:
         {
             cout << source[p] << endl;
             p++;
+        }
+    }
+
+    void skipComments()
+    {
+        if (currChar == '#')
+        {
+            while (currChar != '\n')
+                nextChar();
         }
     }
 
