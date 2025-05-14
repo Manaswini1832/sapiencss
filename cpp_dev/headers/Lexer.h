@@ -64,7 +64,10 @@ public:
         if (currChar == '#')
         {
             while (currChar != '\n')
+            {
                 nextChar();
+            }
+            nextChar();
         }
     }
 

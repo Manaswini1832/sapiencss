@@ -98,6 +98,11 @@ public:
     {
         while (peekToken->getTokenType() != END_OF_FILE)
         {
+            if (currToken && currToken->getTokenWord() == "#")
+            {
+                nextToken();
+            }
+
             make();
             if (errorBool)
                 return;

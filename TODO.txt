@@ -1,4 +1,4 @@
-[ ] Comments not being handled correctly by emitter
+[x] Comments not being handled correctly by emitter
 [x] when mistake in attributes and stuff after them till next immediate semicolon, if there's an immediate correction, then pressing compile button doesn't give right output
 [x] show errors separate from canvas js output. instead of just printing error as comment, show it in reactjs
 [ ] UI

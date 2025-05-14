@@ -4,7 +4,7 @@ import { WasmContext } from "./contexts/WasmContext";
 export const Home = () => {
     const { wasmModule } = useContext(WasmContext);
     const [result, setResult] = useState("");
-    const [input, setInput] = useState(""); // input state
+    const [input, setInput] = useState("MAKE RECTANGLE \"r1\" WITH color \"teal\", x \"10\", y \"100\", width \"500\", height \"100\";\nMAKE CIRCLE \"c1\" WITH color \"pink\", x \"50\", y \"50\", radius \"30\";\nMAKE LINE \"l1\" WITH color \"orange\", x \"1\", y \"15\", length \"1500\";\n"); // input state
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -50,6 +50,10 @@ export const Home = () => {
         <div>Loading...</div>
     ) : (
         <div>
+            <p>Example : </p>
+            <p>MAKE RECTANGLE "r1" WITH color "teal", x "10", y "100", width "500", height "100";</p>
+            <p>MAKE CIRCLE "c1" WITH color "pink", x "50", y "50", radius "30";</p>
+            <p>MAKE LINE "l1" WITH color "orange", x "1", y "15", length "1500";</p>
             <textarea
                 rows="6"
                 cols="60"
