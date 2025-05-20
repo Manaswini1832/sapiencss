@@ -62,7 +62,7 @@ export const Home = () => {
             <button onClick={handleClick}>Compile</button>
             <h3>Compiler Output:</h3>
             <pre>{result}</pre>
-            <iframe id="iframe" src={htmlString}></iframe>
+            <iframe title="canvas-iframe" id="iframe" src={htmlString}></iframe>
         </div>
     );
 };
