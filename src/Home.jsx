@@ -15,13 +15,15 @@ export const Home = () => {
     }, [wasmModule]);
 
     useEffect(() => {
-        if(result.search("function draw") === -1){
-            //clear the canvas
-            setHtmlString(htmlString + '<script>function draw(){const canvas = document.getElementById("canvas");if (canvas.getContext){const ctx = canvas.getContext("2d");ctx.clearRect(0, 0, canvas.width, canvas.height);}}draw();</script>');
-        }else{
-            //draw on the canvas
-            setHtmlString(htmlString + "<script>" + result + "</script>");
-        }
+        setHtmlString(prevHtml => {
+            if (result.search("function draw") === -1) {
+                // Clear the canvas
+                return prevHtml + '<script>function draw(){const canvas = document.getElementById("canvas");if (canvas.getContext){const ctx = canvas.getContext("2d");ctx.clearRect(0, 0, canvas.width, canvas.height);}}draw();</script>';
+            } else {
+                // Draw on the canvas
+                return prevHtml + "<script>" + result + "</script>";
+            }
+        });
     }, [result]);
 
     const handleClick = () => {   
