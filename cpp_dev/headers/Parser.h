@@ -13,6 +13,7 @@
 
 using namespace std;
 
+// Parser Class
 class Parser
 {
     Lexer *lexer;
@@ -98,6 +99,7 @@ public:
     {
         while (peekToken->getTokenType() != END_OF_FILE)
         {
+
             if (currToken && currToken->getTokenWord() == "#")
             {
                 nextToken();

@@ -68,6 +68,7 @@ public:
                 nextChar();
             }
             nextChar();
+            cout << "this is the next char after skipping comments" << currChar << endl;
         }
     }
 
@@ -189,6 +190,10 @@ public:
         if (currChar == '\0')
         {
             return new Token(END_OF_FILE, "END_OF_FILE");
+        }
+        if (currChar == '#')
+        {
+            skipComments();
         }
 
         // Handle keywords and attributes

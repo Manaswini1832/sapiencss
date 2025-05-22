@@ -254,6 +254,10 @@ public:
         {
             return new Token(END_OF_FILE, "END_OF_FILE");
         }
+        if (currChar == '#')
+        {
+            skipComments();
+        }
 
         // Handle keywords and attributes
         if (isupper(currChar))

@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// Emitter Class
 class Emitter
 {
     string fullPath;
