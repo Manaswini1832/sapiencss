@@ -261,7 +261,6 @@ public:
             {
                 skipComments();
             }
-            cout << "After removing comment line, currChar is : " << currChar << endl;
         }
 
         // Handle keywords and attributes
