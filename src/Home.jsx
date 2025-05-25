@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
 import { WasmContext } from "./contexts/WasmContext";
 import "./Home.css";
+import {Error} from "./Error";
 
 export const Home = () => {
     const { wasmModule } = useContext(WasmContext);
@@ -52,23 +53,76 @@ export const Home = () => {
     return loading ? (
         <div>Loading...</div>
     ) : (
-        <div className="container">
-            <div className="editor">
-                <textarea
-                    className="editor_textarea"
-                    rows="6"
-                    cols="60"
-                    placeholder="Enter your CSS-like code"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
+        <div class="wrapper">
+            <div class="box docs">
+                <section>
+                    <p>SapienCSS supports the following shapes and their corresponding attributes.</p>
+                </section>
+                <section>
+                <h1>Rectangle</h1>
+                <h4>Supported attributes : </h4>
+                <div className="tagsBox">
+                    <p>color</p>
+                    <p>x</p>
+                    <p>y</p>
+                    <p>width</p>
+                    <p>height</p>
+                </div>
+                </section>
+                <section>
+                <h1>Circle</h1>
+                <h4>Supported attributes : </h4>
+                <div className="tagsBox">
+                    <p>color</p>
+                    <p>x</p>
+                    <p>y</p>
+                    <p>radius</p>
+                </div>
+                </section>
+                <section>
+                <h1>Line</h1>
+                <h4>Supported attributes : </h4>
+                <div className="tagsBox">
+                    <p>color</p>
+                    <p>x</p>
+                    <p>y</p>
+                    <p>length</p>
+                </div>
+                </section>
+                <section>
+                <h1>Examples</h1>
+                <div class="codeBlock">
+                    <p>#Remove comments and click Compile</p>
+                    <p>MAKE LINE "l1" WITH color "orange", x "1", y "15", length "500";</p>
+                    <p>MAKE CIRCLE "c1" WITH color "gold", x "50", y "80", radius "50";</p>
+                    <p>MAKE RECTANGLE "r1" WITH color "teal", x "10", y "150", width "80", height "100";</p>
+                </div>
+                
+                <div class="codeBlock">
+                    <p>#Remove comments and click Compile</p>
+                    <p>MAKE CIRCLE "c1" WITH color "gold", x "50", y "60.5", radius "50";</p>
+                    <p>MAKE CIRCLE "c2" WITH color "black", x "30", y "50", radius "5";</p>
+                    <p>MAKE CIRCLE "c3" WITH color "black", x "70", y "50", radius "5";</p>
+                    <p>MAKE CIRCLE "c3" WITH color "coral", x "50", y "80", radius "15";</p>
+                    <p>MAKE RECTANGLE "r1" WITH color "teal", x "10", y "111", width "80", height "100";</p>
+                </div>
+                </section>
+            </div>
+            <div class="editor">
+                <textarea 
+                name="ta-editor" 
+                className="ta-editor-class"
+                placeholder="Enter your CSS-like code"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
                 />
                 <br />
-                <button onClick={handleClick}>Compile</button>
+                <button className="runBtn" onClick={handleClick}>Compile</button>
             </div>
-            {error ? <pre>{result}</pre> : null}
-            <div className="result">
-                <iframe title="canvas-iframe" id="iframe" src={htmlString}></iframe>
+            <div class="result">
+                {error ? <Error errorMessage={result} errorBool={error} /> : null}
+                <iframe title="canvas-iframe"  className="resultIFrame" id="iframe" src={htmlString}></iframe>
             </div>
-        </div>
+            </div>
     );
 };

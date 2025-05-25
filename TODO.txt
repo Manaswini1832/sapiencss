@@ -3,3 +3,5 @@
 [x] show errors separate from canvas js output. instead of just printing error as comment, show it in reactjs
 [x] All commented or first two commented -> invalid token error fix
 [x] ui
+[ ] valid attributes but in invalid shape error fix
+[ ] extra newlines between lines error fix
