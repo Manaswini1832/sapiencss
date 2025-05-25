@@ -68,7 +68,6 @@ public:
                 nextChar();
             }
             nextChar();
-            cout << "this is the next char after skipping comments" << currChar << endl;
         }
     }
 
@@ -168,7 +167,10 @@ public:
         }
         if (currChar == '\n')
         {
-            nextChar();
+            while (currChar == '\n')
+            {
+                nextChar();
+            }
             return new Token(NEWLINE, "NEWLINE");
         }
         if (currChar == ',')
@@ -194,6 +196,10 @@ public:
         if (currChar == '#')
         {
             skipComments();
+            while (currChar == '#')
+            {
+                skipComments();
+            }
         }
 
         // Handle keywords and attributes

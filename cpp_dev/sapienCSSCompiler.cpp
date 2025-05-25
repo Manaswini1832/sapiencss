@@ -231,7 +231,10 @@ public:
         }
         if (currChar == '\n')
         {
-            nextChar();
+            while (currChar == '\n')
+            {
+                nextChar();
+            }
             return new Token(NEWLINE, "NEWLINE");
         }
         if (currChar == ',')
@@ -413,6 +416,12 @@ public:
                 nextToken();
             }
 
+            if (currToken && currToken->getTokenWord() == "NEWLINE")
+            {
+                nl();
+                continue;
+            }
+
             make();
             if (errorBool)
                 return;
@@ -527,6 +536,7 @@ public:
     }
 
     // Rule: attribute_name ::= "color" | "width" | "height" | "x" | "y" | "radius" | "length" | "rotate"
+    // TODO : valid attributes but in invalid shape handle
     void attribute_name(string &attribute_entry_name)
     {
         // Define a list of valid attribute names

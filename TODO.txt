@@ -4,4 +4,5 @@
 [x] All commented or first two commented -> invalid token error fix
 [x] ui
 [ ] valid attributes but in invalid shape error fix
-[ ] extra newlines between lines error fix
+[x] extra newlines between lines error fix
+[ ] clearer errors show (with line and character number)

@@ -53,8 +53,8 @@ export const Home = () => {
     return loading ? (
         <div>Loading...</div>
     ) : (
-        <div class="wrapper">
-            <div class="box docs">
+        <div className="wrapper">
+            <div className="box docs">
                 <section>
                     <p>SapienCSS supports the following shapes and their corresponding attributes.</p>
                 </section>
@@ -91,14 +91,14 @@ export const Home = () => {
                 </section>
                 <section>
                 <h1>Examples</h1>
-                <div class="codeBlock">
+                <div className="codeBlock">
                     <p>#Remove comments and click Compile</p>
                     <p>MAKE LINE "l1" WITH color "orange", x "1", y "15", length "500";</p>
                     <p>MAKE CIRCLE "c1" WITH color "gold", x "50", y "80", radius "50";</p>
                     <p>MAKE RECTANGLE "r1" WITH color "teal", x "10", y "150", width "80", height "100";</p>
                 </div>
                 
-                <div class="codeBlock">
+                <div className="codeBlock">
                     <p>#Remove comments and click Compile</p>
                     <p>MAKE CIRCLE "c1" WITH color "gold", x "50", y "60.5", radius "50";</p>
                     <p>MAKE CIRCLE "c2" WITH color "black", x "30", y "50", radius "5";</p>
@@ -108,7 +108,7 @@ export const Home = () => {
                 </div>
                 </section>
             </div>
-            <div class="editor">
+            <div className="editor">
                 <textarea 
                 name="ta-editor" 
                 className="ta-editor-class"
@@ -119,7 +119,7 @@ export const Home = () => {
                 <br />
                 <button className="runBtn" onClick={handleClick}>Compile</button>
             </div>
-            <div class="result">
+            <div className="result">
                 {error ? <Error errorMessage={result} errorBool={error} /> : null}
                 <iframe title="canvas-iframe"  className="resultIFrame" id="iframe" src={htmlString}></iframe>
             </div>

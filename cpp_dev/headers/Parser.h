@@ -82,6 +82,8 @@ public:
         emitter->headerLine("  if (canvas.getContext) {");
         emitter->headerLine("    const ctx = canvas.getContext(\"2d\");");
         emitter->headerLine("    ctx.clearRect(0, 0, canvas.width, canvas.height);");
+        emitter->headerLine("    let x, y, width, height, radius, length;");
+
         statement();
         if (errorBool)
         {
@@ -103,6 +105,12 @@ public:
             if (currToken && currToken->getTokenWord() == "#")
             {
                 nextToken();
+            }
+
+            if (currToken && currToken->getTokenWord() == "NEWLINE")
+            {
+                nl();
+                continue;
             }
 
             make();
@@ -287,14 +295,14 @@ public:
         emitter->emitLine("\n    // " + values["identifier"]); // id of the shape will be put as a comment
         if (values["shape"] == "RECTANGLE")
         {
-            emitter->emitLine("    let x = " + values["x"] + ", y = " + values["y"] + ", width = " + values["width"] + ", height = " + values["height"] + ";");
+            emitter->emitLine("    x = " + values["x"] + ", y = " + values["y"] + ", width = " + values["width"] + ", height = " + values["height"] + ";");
             emitter->emitLine("    ctx.fillStyle = \"" + values["color"] + "\";");
             emitter->emitLine("    ctx.fillRect(x, y, width, height);");
         }
         else if (values["shape"] == "CIRCLE")
         {
             emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
-            emitter->emitLine("    let radius = " + values["radius"] + ";");
+            emitter->emitLine("    radius = " + values["radius"] + ";");
             emitter->emitLine("    ctx.beginPath();");
             emitter->emitLine("    ctx.arc(x, y, radius, 0, 2 * Math.PI);");
             emitter->emitLine("    ctx.fillStyle = \"" + values["color"] + "\";");
@@ -303,7 +311,7 @@ public:
         else if (values["shape"] == "LINE")
         {
             emitter->emitLine("    x = " + values["x"] + "; y = " + values["y"] + ";");
-            emitter->emitLine("    let length = " + values["length"] + ";");
+            emitter->emitLine("    length = " + values["length"] + ";");
             emitter->emitLine("    ctx.beginPath();");
             emitter->emitLine("    ctx.moveTo(x, y);");
             emitter->emitLine("    ctx.lineTo(x + length, y);");
